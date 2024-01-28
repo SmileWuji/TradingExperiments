@@ -1,4 +1,4 @@
-from .ptnd import sma
+from .ptnd import ptnd_sma
 
 import numpy as np
 
@@ -21,13 +21,14 @@ def _write_cache(res, holding_period_days, aggregation_period_days, cache_key):
     k = _internal_key(holding_period_days, aggregation_period_days, cache_key)
     LATTICE_CACHE[k] = res
 
-def change_over_aggregaion_table(a, holding_period_days, aggregation_period_days, cache_key=None):
+def lattice_change_over_aggregaion_table(a, holding_period_days, aggregation_period_days,
+        cache_key=None):
     res = _load_cache(holding_period_days, aggregation_period_days, cache_key)
     if res is not None:
         return res
 
     a_first_valid_idx = np.argwhere(np.isfinite(a))[0][0]
-    a_sma = sma(a, holding_period_days-1)
+    a_sma = ptnd_sma(a, holding_period_days-1)
 
     # Average within the holding period
     num_periods = aggregation_period_days // holding_period_days
@@ -45,34 +46,33 @@ def change_over_aggregaion_table(a, holding_period_days, aggregation_period_days
     _write_cache(a_chg_table, holding_period_days, aggregation_period_days, cache_key)
     return a_chg_table
 
-def historical_volatility(a, holding_period_days, aggregation_period_days, cache_key=None):
-    a_chg_table = change_over_aggregaion_table(
+def lattice_historical_volatility(a, holding_period_days, aggregation_period_days, cache_key=None):
+    a_chg_table = lattice_change_over_aggregaion_table(
         a, holding_period_days, aggregation_period_days, cache_key)
     result_std = np.std(a_chg_table, axis=0, ddof=1)
     result_std = result_std * np.power((252/holding_period_days), 0.5)
     return result_std
 
-def historical_return(a, aggregation_period_days, cache_key=None):
-    a_chg_table = change_over_aggregaion_table(
+def lattice_historical_return(a, aggregation_period_days, cache_key=None):
+    a_chg_table = lattice_change_over_aggregaion_table(
         a,
         aggregation_period_days,
         2*aggregation_period_days)
     return a_chg_table[0]
 
-def win_rate(a, holding_period_days, aggregation_period_days, cache_key=None):
-    a_chg_table = change_over_aggregaion_table(
+def lattice_positive_rate(a, holding_period_days, aggregation_period_days, cache_key=None):
+    a_chg_table = lattice_change_over_aggregaion_table(
         a, holding_period_days, aggregation_period_days, cache_key)
     num_periods = aggregation_period_days // holding_period_days
 
-    # Then, take the average and standard deviation
     result = np.sum((a_chg_table > 0), axis=0) / num_periods
     return result
 
-def correlation(lhs, rhs, holding_period_days, aggregation_period_days,
+def lattice_correlation(lhs, rhs, holding_period_days, aggregation_period_days,
         lhs_cache_key=None, rhs_cache_key=None):
-    lhs_ret_table = change_over_aggregaion_table(lhs, holding_period_days, aggregation_period_days,
+    lhs_ret_table = lattice_change_over_aggregaion_table(lhs, holding_period_days, aggregation_period_days,
         lhs_cache_key)
-    rhs_ret_table = change_over_aggregaion_table(rhs, holding_period_days, aggregation_period_days,
+    rhs_ret_table = lattice_change_over_aggregaion_table(rhs, holding_period_days, aggregation_period_days,
         rhs_cache_key)
 
     lhs_chg_avg = np.mean(lhs_ret_table, axis=0)
@@ -88,11 +88,11 @@ def correlation(lhs, rhs, holding_period_days, aggregation_period_days,
     result = mix_basis_ss / (lhs_basis_ss * rhs_basis_ss)
     return result
 
-def beta(a, index, holding_period_days, aggregation_period_days,
+def lattice_beta(a, index, holding_period_days, aggregation_period_days,
         a_cache_key=None, index_cache_key=None):
-    a_ret_table = change_over_aggregaion_table(
+    a_ret_table = lattice_change_over_aggregaion_table(
         a, holding_period_days, aggregation_period_days, a_cache_key)
-    index_ret_table = change_over_aggregaion_table(
+    index_ret_table = lattice_change_over_aggregaion_table(
         index, holding_period_days, aggregation_period_days, index_cache_key)
 
     a_chg_avg = np.mean(a_ret_table, axis=0)

@@ -1,5 +1,11 @@
 import numpy as np
 
+def db_map(db, map_fn):
+    res_db = dict()
+    for ticker_name in db:
+        res_db[ticker_name] = map_fn(ticker_name)
+    return res_db
+
 def db_consolidate(db):
     '''
     Consolidates db into a table
@@ -37,9 +43,9 @@ def db_rank(db):
     order = np.argsort(table, axis=0)
     rank = np.argsort(order, axis=0)
 
-    db_res = dict()
+    res_db = dict()
     for i in range(len(table_index)):
         ticker_name = table_index[i]
         a = rank[i]
-        db_res[ticker_name] = a
-    return db_res
+        res_db[ticker_name] = a
+    return res_db

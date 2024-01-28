@@ -50,23 +50,23 @@ if __name__ == '__main__':
     RETURN_252_DB = dict()
 
     for ticker_name in MARKET_DB:
-        HV_1_21_DB[ticker_name] = ind.historical_volatility(MARKET_DB[ticker_name], 1, 21,
+        HV_1_21_DB[ticker_name] = ind.lattice_historical_volatility(MARKET_DB[ticker_name], 1, 21,
             cache_key=ticker_name)
-        HV_5_63_DB[ticker_name] = ind.historical_volatility(MARKET_DB[ticker_name], 5, 63,
+        HV_5_63_DB[ticker_name] = ind.lattice_historical_volatility(MARKET_DB[ticker_name], 5, 63,
             cache_key=ticker_name)
-        HV_21_252_DB[ticker_name] = ind.historical_volatility(MARKET_DB[ticker_name], 21, 252,
+        HV_21_252_DB[ticker_name] = ind.lattice_historical_volatility(MARKET_DB[ticker_name], 21, 252,
             cache_key=ticker_name)
 
-        BETA_1_21_DB[ticker_name] = ind.beta(MARKET_DB[ticker_name], MARKET_DATA['index']['adj_close'], 1, 21,
+        BETA_1_21_DB[ticker_name] = ind.lattice_beta(MARKET_DB[ticker_name], MARKET_DATA['index']['adj_close'], 1, 21,
             a_cache_key=ticker_name, index_cache_key='_index')
-        BETA_5_63_DB[ticker_name] = ind.beta(MARKET_DB[ticker_name], MARKET_DATA['index']['adj_close'], 5, 63,
+        BETA_5_63_DB[ticker_name] = ind.lattice_beta(MARKET_DB[ticker_name], MARKET_DATA['index']['adj_close'], 5, 63,
             a_cache_key=ticker_name, index_cache_key='_index')
-        BETA_21_252_DB[ticker_name] = ind.beta(MARKET_DB[ticker_name], MARKET_DATA['index']['adj_close'], 21, 252,
+        BETA_21_252_DB[ticker_name] = ind.lattice_beta(MARKET_DB[ticker_name], MARKET_DATA['index']['adj_close'], 21, 252,
             a_cache_key=ticker_name, index_cache_key='_index')
 
-        RETURN_21_DB[ticker_name] = ind.historical_return(MARKET_DB[ticker_name], 21)
-        RETURN_63_DB[ticker_name] = ind.historical_return(MARKET_DB[ticker_name], 63)
-        RETURN_252_DB[ticker_name] = ind.historical_return(MARKET_DB[ticker_name], 252)
+        RETURN_21_DB[ticker_name] = ind.lattice_historical_return(MARKET_DB[ticker_name], 21)
+        RETURN_63_DB[ticker_name] = ind.lattice_historical_return(MARKET_DB[ticker_name], 63)
+        RETURN_252_DB[ticker_name] = ind.lattice_historical_return(MARKET_DB[ticker_name], 252)
 
     np.save(out_dir + '/HV_1_21_DB', HV_1_21_DB)
     np.save(out_dir + '/HV_5_63_DB', HV_5_63_DB)

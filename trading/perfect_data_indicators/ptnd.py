@@ -33,13 +33,13 @@ def ptnd_table(a, n_days):
 
     return res
 
-def sma(a, n_days):
+def ptnd_sma(a, n_days):
     '''
     Returns the simple moving average of a using past n_days of data
     '''
     return np.average(ptnd_table(a, n_days), axis=1)
 
-def change_trendline(a, n_days):
+def ptnd_change_trendline(a, n_days):
     '''
     Returns the slopes m (of mx+b lines) with (closed form) linear regression
     (m is commonly denoted as β)
@@ -68,7 +68,7 @@ def change_trendline(a, n_days):
 
     return beta, loss
 
-def drawdown(a, n_days):
+def ptnd_drawdown(a, n_days):
     table = ptnd_table(a, n_days)
     table = np.flip(table, axis=1)
     acc_table = np.maximum.accumulate(table, axis=1)
@@ -76,7 +76,7 @@ def drawdown(a, n_days):
     drawdown_pct = drawdown_amt / acc_table
     return -np.max(drawdown_pct, axis=1)
 
-def percentile(a, q, n_days):
+def ptnd_percentile(a, q, n_days):
     '''
     Returns the q'th percentile using past n_days of data
     '''
